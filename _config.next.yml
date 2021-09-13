@@ -414,7 +414,7 @@ github_banner:
 # ---------------------------------------------------------------
 
 font:
-  enable: false
+  enable: true
 
   # Uri of fonts host, e.g. https://fonts.googleapis.com (Default).
   host:
@@ -428,7 +428,7 @@ font:
   global:
     external: true
     family: Lato
-    size:
+    size: 0.9
 
   # Font settings for site title (.site-title).
   title:
@@ -445,12 +445,13 @@ font:
   # Font settings for posts (.post-body).
   posts:
     external: true
-    family:
+    family: Courier New
+    size: 0.9
 
   # Font settings for <code> and code blocks.
   codes:
     external: true
-    family:
+    family: Monaca
 
 
 # ---------------------------------------------------------------
