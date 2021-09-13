@@ -20,25 +20,31 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","version":"8.5.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="随便写写，随便看看。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="WeWesMm">
-<meta property="og:url" content="http://example.com/index.html">
+<meta name="description" content="&amp;emsp;&amp;emsp;Java 虚拟机在执行 Java 程序的过程中会把它所管理的内存划分为若干个不同的数据区域。根据《Java 虚拟机规范》的规定，Java 虚拟机所管理的将会包括一下几个运行时数据区域。  程序计数器&amp;emsp;&amp;emsp;程序计数器（Program Counter Register）是一块较小的内存空间，它可以看做是当前线程所执行的字节码的行号指示器。在 Java 虚拟机的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="运行时区域数据">
+<meta property="og:url" content="http://example.com/2021/09/13/jvm/java-memory-area_memory-overflow-exceptions/runtime-area-data/index.html">
 <meta property="og:site_name" content="WeWesMm">
-<meta property="og:description" content="随便写写，随便看看。">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;Java 虚拟机在执行 Java 程序的过程中会把它所管理的内存划分为若干个不同的数据区域。根据《Java 虚拟机规范》的规定，Java 虚拟机所管理的将会包括一下几个运行时数据区域。  程序计数器&amp;emsp;&amp;emsp;程序计数器（Program Counter Register）是一块较小的内存空间，它可以看做是当前线程所执行的字节码的行号指示器。在 Java 虚拟机的">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/jvm/chapter1/1625581892115-91d7bf9d-9d6f-4ae4-a730-743434dadfa6.png">
+<meta property="article:published_time" content="2021-09-13T14:38:19.000Z">
+<meta property="article:modified_time" content="2021-09-13T15:26:57.165Z">
 <meta property="article:author" content="WeWesMm">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/jvm/chapter1/1625581892115-91d7bf9d-9d6f-4ae4-a730-743434dadfa6.png">
 
 
-<link rel="canonical" href="http://example.com/">
+<link rel="canonical" href="http://example.com/2021/09/13/jvm/java-memory-area_memory-overflow-exceptions/runtime-area-data/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2021/09/13/jvm/java-memory-area_memory-overflow-exceptions/runtime-area-data/","path":"2021/09/13/jvm/java-memory-area_memory-overflow-exceptions/runtime-area-data/","title":"运行时区域数据"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>WeWesMm</title>
+<title>运行时区域数据 | WeWesMm</title>
   
 
 
@@ -104,7 +110,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -117,6 +123,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="nav-number">1.</span> <span class="nav-text">程序计数器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88"><span class="nav-number">2.</span> <span class="nav-text">Java 虚拟机栈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88"><span class="nav-number">3.</span> <span class="nav-text">本地方法栈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-%E5%A0%86"><span class="nav-number">4.</span> <span class="nav-text">Java 堆</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E5%8C%BA"><span class="nav-number">5.</span> <span class="nav-text">方法区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E5%B8%B8%E9%87%8F%E6%B1%A0"><span class="nav-number">6.</span> <span class="nav-text">运行时常量池</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98"><span class="nav-number">7.</span> <span class="nav-text">直接内存</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -179,16 +186,17 @@
 </noscript>
 
 
-    <div class="main-inner index posts-expand">
+    <div class="main-inner post posts-expand">
 
-    
+
+  
 
 
 <div class="post-block">
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/13/jvm/java-memory-area_memory-overflow-exceptions/runtime-area-data/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -201,9 +209,9 @@
       <meta itemprop="name" content="WeWesMm">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/09/13/jvm/java-memory-area_memory-overflow-exceptions/runtime-area-data/" class="post-title-link" itemprop="url">运行时区域数据</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          运行时区域数据
+        </h1>
 
         <div class="post-meta-container">
           <div class="post-meta">
@@ -236,7 +244,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>&emsp;&emsp;Java 虚拟机在执行 Java 程序的过程中会把它所管理的内存划分为若干个不同的数据区域。根据《Java 虚拟机规范》的规定，Java 虚拟机所管理的将会包括一下几个运行时数据区域。</p>
+        <p>&emsp;&emsp;Java 虚拟机在执行 Java 程序的过程中会把它所管理的内存划分为若干个不同的数据区域。根据《Java 虚拟机规范》的规定，Java 虚拟机所管理的将会包括一下几个运行时数据区域。</p>
 <p><img src="/images/jvm/chapter1/1625581892115-91d7bf9d-9d6f-4ae4-a730-743434dadfa6.png"></p>
 <h2 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h2><p>&emsp;&emsp;程序计数器（Program Counter Register）是一块较小的内存空间，它可以看做是当前线程所执行的字节码的行号指示器。在 Java 虚拟机的概念模型里，字节码解释器工作时就是通过改变这个计数器的值来选取下一条需要执行的字节码指令，<span style="color:red">它是程序控制流的指示器，分支、循环、跳转、异常处理、线程恢复等基础功能都需要依赖这个计数器来完成。</span></p>
 <p>&emsp;&emsp;由于 Java 虚拟机的多线程是通过线程轮流切换、分配处理器执行时间的方式来实现的，在任何一个确定的时刻，一个处理器（对于多核处理器来说是一个内核）都只会执行一条指令。因此，为了线程切换后能恢复到正确的执行位置，每条线程都需要一个独立的程序计数器，各条线程之间计数器互不影响，独立存储，我们称这类内存区域为“线程私有”的内存。</p>
@@ -266,7 +274,6 @@
 <p>&emsp;&emsp;在 JDK 1.4 中新加入了 NIO 类，引入了一种基于通道（Channel）和缓冲区（Buffer）的 I/O 方式，它可以使用 Native 函数库直接分配堆外内存，然后直接通过一个存储在 Java 堆中的 DirectByteBuffer 对象作为这块内存的引用进行操作。</p>
 <p>&emsp;&emsp;直接内存的分配不会受到 Java 堆大小的限制，但是，会受到本机总内存（包括物理内存、SWAP 分区或者分页文件）大小以及处理器寻址空间的限制，一般服务器管理员配置虚拟机参数时，会根据实际内存去设置 -Xmx 等参数信息，但经常忽略掉直接内存，使得各个内存区域总和大于物理内存限制，从而导致了 OOM 异常。</p>
 
-      
     </div>
 
     
@@ -274,123 +281,26 @@
     
 
     <footer class="post-footer">
-        <div class="post-eof"></div>
-      
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+              <a href="/tags/JVM/" rel="tag"># JVM</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/09/09/computer-network-overview/" rel="prev" title="计算机网络-概述">
+                  <i class="fa fa-chevron-left"></i> 计算机网络-概述
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
     </footer>
   </article>
 </div>
 
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/09/computer-network-overview/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpeg">
-      <meta itemprop="name" content="WeWesMm">
-      <meta itemprop="description" content="随便写写，随便看看。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="WeWesMm">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/09/09/computer-network-overview/" class="post-title-link" itemprop="url">计算机网络-概述</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2021-09-09 22:46:02 / 修改时间：23:18:19" itemprop="dateCreated datePublished" datetime="2021-09-09T22:46:02+08:00">2021-09-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="速率相关性能指标"><a href="#速率相关性能指标" class="headerlink" title="速率相关性能指标"></a>速率相关性能指标</h1><h2 id="速率"><a href="#速率" class="headerlink" title="速率"></a>速率</h2><p>​    <strong>定义</strong>：连接在计算机网络上的主机在数字信道上传送数据位数的速率。<br>​    <strong>单位</strong>：<code>b/s</code>，<code>Kb/s</code>，<code>Mb/s</code>，<code>Gb/s</code>，其中 <code>b</code> 代表的是比特（bit）。如果使用字节表示单位，则是 <code>B/s</code>， <code>KB/s</code>，<code>MB/s</code>，<code>GB/s</code> 等，其中 <code>B</code> 代表的就是字节（Byte）。</p>
-<h2 id="带宽"><a href="#带宽" class="headerlink" title="带宽"></a>带宽</h2><p>​    在计算机网络中，指的是网络设备所支持的最高速度，单位同速率，是<strong>理想条件下最高速率</strong>。</p>
-<h2 id="吞吐量"><a href="#吞吐量" class="headerlink" title="吞吐量"></a>吞吐量</h2><p>​    指的是单位时间内通过某个网络的数据<strong>总量</strong>。</p>
-<blockquote>
-<p>​    速率就是实际网速，带宽是理论网速（长城宽带警告），吞吐量是一个或多个设备的综合速率，比如说1000m宽带的路由器连着三部手机，每部手机都是10mb/s看片，那么速率就是10mb/s，带宽是宽带的1000m，路由器吞吐量是30mb/s，即三者之和。</p>
-</blockquote>
-<h1 id="时延相关指标"><a href="#时延相关指标" class="headerlink" title="时延相关指标"></a>时延相关指标</h1><h2 id="时延"><a href="#时延" class="headerlink" title="时延"></a>时延</h2><p>​    时延包括如下四大类：</p>
-<table>
-<thead>
-<tr>
-<th align="center">名称</th>
-<th align="center">描述</th>
-<th align="center">计算公式</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">发送时延</td>
-<td align="center">数据从主机到信道上所用的时间</td>
-<td align="center">发送的数据长度/发送速率</td>
-</tr>
-<tr>
-<td align="center">传播时延</td>
-<td align="center">数据在信道上传播所花费的时间</td>
-<td align="center">信道长度/电磁波在信道上传播的速率</td>
-</tr>
-<tr>
-<td align="center">排队时延</td>
-<td align="center">数据在路由器前等待前面数据处理的时间</td>
-<td align="center">无计算方式</td>
-</tr>
-<tr>
-<td align="center">处理时延</td>
-<td align="center">数据在路由器中处理需求的时间</td>
-<td align="center">无计算方式</td>
-</tr>
-</tbody></table>
-<blockquote>
-<p>我们常说的提高网速实际上提高的仅仅只是发送时延，无法减少其他的三个时延！</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
 
 
 
